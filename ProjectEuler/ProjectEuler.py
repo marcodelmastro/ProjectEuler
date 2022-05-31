@@ -57,6 +57,17 @@ def primeFactors(n):
         d = d + 1 # increase divident
     return factors
 
+def yieldFactors(n):
+    i = 2
+    while i*i<=n:
+        if n%i == 0:
+            n/=i
+            yield i
+        else:
+            i+=1
+    if n>1:
+        yield int(n)
+
 #def isPrime(n):
 #    f = primeFactors(n)
 #    if len(f)!=1:
@@ -78,6 +89,34 @@ def isPrime(n):
     return True
 
 isPrime_mem = memoize(isPrime)
+
+
+# Miller–Rabin primality test
+# https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
+def isPrimeMR(n, k=3):
+    import random
+    if n < 6:  # assuming n >= 0 in all cases shortcut small cases here
+        return [False, False, True, True, False, True][n]
+    elif n % 2 == 0:  # should be faster than n % 2
+        return False
+    else:
+        s, d = 0, n - 1
+        while d % 2 == 0:
+            s, d = s + 1, d >> 1
+        for a in random.sample(range(2, n-2), k):
+            x = pow(a, d, n)
+            if x != 1 and x + 1 != n:
+                for r in range(1, s):
+                    x = pow(x, 2, n)
+                    if x == 1:
+                        return False
+                    elif x == n - 1:
+                        a = 0
+                        break
+                    if a:
+                        return False
+        return True
+
 
 def factors(n):
     """Returns all factors of a positive integer. Returns n if prime"""
