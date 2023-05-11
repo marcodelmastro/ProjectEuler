@@ -186,5 +186,4 @@ def gen_all_pyth_trips(limit):
         i = prim
         for _ in range(limit//prim[2]):
             yield i
-            i = i + prim
-            
+            i = i + prim            
